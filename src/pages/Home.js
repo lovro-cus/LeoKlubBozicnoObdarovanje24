@@ -1,6 +1,7 @@
 import supabase from "../config/supabaseClient"
 
 const Home = () => {
+  console.log("Push test lol")
   console.log(supabase)
 
   return (
