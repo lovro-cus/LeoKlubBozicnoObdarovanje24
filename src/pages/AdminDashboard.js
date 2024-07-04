@@ -22,8 +22,8 @@ const AdminDashboard = () => {
     setShowForm(true);
   };
 
-  const handleDelete = async (idUsers) => {
-    const { data, error } = await supabase.from('users').delete().eq('idUsers', idUsers);
+  const handleDelete = async (idusers) => {
+    const { data, error } = await supabase.from('users').delete().eq('idusers', idusers);
     if (error) {
       console.error('Error deleting user:', error);
     } else {

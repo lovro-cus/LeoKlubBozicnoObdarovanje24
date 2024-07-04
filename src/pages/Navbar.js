@@ -1,9 +1,9 @@
 import React from 'react';
-import { Drawer, List, ListItem, ListItemText, ListItemIcon, IconButton, Toolbar, AppBar, Typography, Box, Divider } from '@mui/material';
-import { Home as HomeIcon, Login as LoginIcon, Dashboard as DashboardIcon, Menu as MenuIcon } from '@mui/icons-material';
+import { Drawer, List, ListItem, ListItemText, ListItemIcon, Toolbar, Box, Divider } from '@mui/material';
+import { Home as HomeIcon, Login as LoginIcon, Dashboard as DashboardIcon} from '@mui/icons-material';
 import { Link as RouterLink } from 'react-router-dom';
-import { useAuth } from '../AuthContext'; // Uvozite useAuth
-import leoKlubLogo from '../images/leoKlubLogo.png'; // Importirajte sliko
+import { useAuth } from '../AuthContext';
+import leoKlubLogo from '../images/leoKlubLogo.png'; 
 
 const drawerWidth = 240;
 
@@ -66,7 +66,7 @@ const Navbar = () => {
           open={mobileOpen}
           onClose={handleDrawerToggle}
           ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
+            keepMounted: true,
           }}
           sx={{
             display: { xs: 'block', sm: 'none' },

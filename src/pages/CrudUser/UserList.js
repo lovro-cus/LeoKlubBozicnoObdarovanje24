@@ -8,6 +8,7 @@ const UserList = ({ onEdit, onDelete }) => {
   useEffect(() => {
     const fetchUsers = async () => {
       const { data, error } = await supabase.from('users').select('*');
+      console.log(data)
       if (error) {
         console.error('Error fetching users:', error);
       } else {
@@ -35,13 +36,13 @@ const UserList = ({ onEdit, onDelete }) => {
           </TableHead>
           <TableBody>
             {users.map((user) => (
-              <TableRow key={user.idUsers}>
-                <TableCell>{user.idUsers}</TableCell>
+              <TableRow key={user.idusers}>
+                <TableCell>{user.idusers}</TableCell>
                 <TableCell>{user.username}</TableCell>
                 <TableCell>{user.datum}</TableCell>
                 <TableCell>
                   <Button onClick={() => onEdit(user)}>Uredi</Button>
-                  <Button onClick={() => onDelete(user.idUsers)}>Izbriši</Button>
+                  <Button onClick={() => onDelete(user.idusers)}>Izbriši</Button>
                 </TableCell>
               </TableRow>
             ))}
