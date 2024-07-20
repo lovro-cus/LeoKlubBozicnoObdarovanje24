@@ -37,6 +37,10 @@ const AdminDashboard = () => {
     setShowForm(false);
   };
 
+  const handleFormular = () => {
+    navigate('/formular');
+  };
+
   return (
     <Container>
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
@@ -51,6 +55,9 @@ const AdminDashboard = () => {
             <UserList onEdit={handleEdit} onDelete={handleDelete} />
             <Button variant="contained" onClick={() => setShowForm(true)} sx={{ mt: 2 }}>
               Dodaj novega uporabnika
+            </Button>
+            <Button variant="contained" color="secondary" onClick={handleFormular} sx={{ mt: 2 }}>
+              Izpolni formular
             </Button>
           </>
         ) : (

@@ -8,6 +8,8 @@ import Update from './pages/Update';
 import Login from './pages/login';
 import AdminDashboard from './pages/AdminDashboard';
 import Navbar from './pages/Navbar';
+import Formular from './pages/Formular';
+
 
 function App() {
   return (
@@ -27,6 +29,7 @@ function App() {
               <Route path="/create" element={<Create />} />
               <Route path="/:id" element={<Update />} />
               <Route path="/adminDashboard" element={<AdminDashboard />} />
+              <Route path="/formular" element={<Formular />} />
             </Routes>
           </Box>
         </BrowserRouter>

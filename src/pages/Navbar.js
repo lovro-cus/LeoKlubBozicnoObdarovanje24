@@ -1,9 +1,9 @@
 import React from 'react';
-import { Drawer, List, ListItem, ListItemText, ListItemIcon, Toolbar, Box, Divider } from '@mui/material';
-import { Home as HomeIcon, Login as LoginIcon, Dashboard as DashboardIcon} from '@mui/icons-material';
+import { Drawer, List, ListItem, ListItemText, ListItemIcon, IconButton, Toolbar, AppBar, Typography, Box, Divider } from '@mui/material';
+import { Home as HomeIcon, Login as LoginIcon, Dashboard as DashboardIcon, Menu as MenuIcon } from '@mui/icons-material';
 import { Link as RouterLink } from 'react-router-dom';
-import { useAuth } from '../AuthContext';
-import leoKlubLogo from '../images/leoKlubLogo.png'; 
+import { useAuth } from '../AuthContext'; // Uvozite useAuth
+import leoKlubLogo from '../images/leoKlubLogo.png'; // Importirajte sliko
 
 const drawerWidth = 240;
 
@@ -21,7 +21,7 @@ const Navbar = () => {
         <Box
           component="img"
           sx={{
-            height: 64,
+            height: 128,
             width: 'auto',
             marginLeft: 'auto',
             marginRight: 'auto',
@@ -37,10 +37,12 @@ const Navbar = () => {
             <ListItemIcon><HomeIcon /></ListItemIcon>
             <ListItemText primary="Domov" />
           </ListItem>
-          <ListItem button component={RouterLink} to="/login">
-            <ListItemIcon><LoginIcon /></ListItemIcon>
-            <ListItemText primary="Prijava" />
-          </ListItem>
+          {!isAdmin && (
+            <ListItem button component={RouterLink} to="/login">
+              <ListItemIcon><LoginIcon /></ListItemIcon>
+              <ListItemText primary="Prijava" />
+            </ListItem>
+          )}
         </List>
       </Box>
       {isAdmin && (
@@ -66,7 +68,7 @@ const Navbar = () => {
           open={mobileOpen}
           onClose={handleDrawerToggle}
           ModalProps={{
-            keepMounted: true,
+            keepMounted: true, // Better open performance on mobile.
           }}
           sx={{
             display: { xs: 'block', sm: 'none' },
