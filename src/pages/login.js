@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Container, CssBaseline, TextField, Button, Box, Typography, Avatar, Paper } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom'; // Uvozite useNavigate
+import { useNavigate } from 'react-router-dom';
 import supabase from '../config/supabaseClient';
-import { useAuth } from '../AuthContext'; // Uvozite useAuth
+import { useAuth } from '../AuthContext';
 
 const theme = createTheme();
 
@@ -12,8 +12,8 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { login } = useAuth(); // Uporabite login funkcijo iz konteksta
-  const navigate = useNavigate(); // Uporabite useNavigate za preusmeritev
+  const { login } = useAuth();
+  const navigate = useNavigate(); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,8 +29,8 @@ export default function Login() {
       setError('Napačno uporabniško ime ali geslo.');
     } else {
       setError('');
-      login(); // Pokličite login funkcijo
-      navigate('/adminDashboard'); // Preusmerite na adminDashboard
+      login();
+      navigate('/adminDashboard'); 
     }
   };
 

@@ -21,7 +21,7 @@ const Navbar = () => {
         <Box
           component="img"
           sx={{
-            height: 64,
+            height: 128,
             width: 'auto',
             marginLeft: 'auto',
             marginRight: 'auto',
@@ -37,10 +37,12 @@ const Navbar = () => {
             <ListItemIcon><HomeIcon /></ListItemIcon>
             <ListItemText primary="Domov" />
           </ListItem>
-          <ListItem button component={RouterLink} to="/login">
-            <ListItemIcon><LoginIcon /></ListItemIcon>
-            <ListItemText primary="Prijava" />
-          </ListItem>
+          {!isAdmin && (
+            <ListItem button component={RouterLink} to="/login">
+              <ListItemIcon><LoginIcon /></ListItemIcon>
+              <ListItemText primary="Prijava" />
+            </ListItem>
+          )}
         </List>
       </Box>
       {isAdmin && (

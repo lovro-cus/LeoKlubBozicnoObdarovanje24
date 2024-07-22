@@ -1,13 +1,15 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Container, Box, CssBaseline, Toolbar } from '@mui/material';
-import { AuthProvider } from './AuthContext'; // Uvozite AuthProvider
+import { Box, CssBaseline, Toolbar } from '@mui/material';
+import { AuthProvider } from './AuthContext'; 
 import Home from './pages/Home';
 import Create from './pages/Create';
 import Update from './pages/Update';
 import Login from './pages/login';
-import AdminDashboard from './pages/AdminDashboard'; // Uvozite AdminDashboard
+import AdminDashboard from './pages/AdminDashboard';
 import Navbar from './pages/Navbar';
+import Formular from './pages/Formular';
+
 
 function App() {
   return (
@@ -26,7 +28,8 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/create" element={<Create />} />
               <Route path="/:id" element={<Update />} />
-              <Route path="/adminDashboard" element={<AdminDashboard />} /> {/* Dodajte novo pot */}
+              <Route path="/adminDashboard" element={<AdminDashboard />} />
+              <Route path="/formular" element={<Formular />} />
             </Routes>
           </Box>
         </BrowserRouter>

@@ -22,8 +22,8 @@ const AdminDashboard = () => {
     setShowForm(true);
   };
 
-  const handleDelete = async (idUsers) => {
-    const { data, error } = await supabase.from('users').delete().eq('idUsers', idUsers);
+  const handleDelete = async (idusers) => {
+    const { data, error } = await supabase.from('users').delete().eq('idusers', idusers);
     if (error) {
       console.error('Error deleting user:', error);
     } else {
@@ -35,6 +35,10 @@ const AdminDashboard = () => {
   const handleSave = () => {
     setEditingUser(null);
     setShowForm(false);
+  };
+
+  const handleFormular = () => {
+    navigate('/formular');
   };
 
   return (
@@ -51,6 +55,9 @@ const AdminDashboard = () => {
             <UserList onEdit={handleEdit} onDelete={handleDelete} />
             <Button variant="contained" onClick={() => setShowForm(true)} sx={{ mt: 2 }}>
               Dodaj novega uporabnika
+            </Button>
+            <Button variant="contained" color="secondary" onClick={handleFormular} sx={{ mt: 2 }}>
+              Izpolni formular
             </Button>
           </>
         ) : (

@@ -14,15 +14,31 @@ const UserForm = ({ user, onSave }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const now = new Date().toISOString();
+
+    if (user && user.idusers) {
+      // PUT request to update an existing user
       const { data, error } = await supabase
         .from('users')
-        .insert({ username, datum: now });
+        .update({ username })
+        .eq('idusers', user.idusers);
+
+      if (error) {
+        console.error('Error updating user:', error);
+      } else {
+        onSave();
+      }
+    } else {
+      // POST request to insert a new user
+      const { data, error } = await supabase
+        .from('users')
+        .insert([{ username, datum: now }]);
 
       if (error) {
         console.error('Error creating user:', error);
       } else {
         onSave();
       }
+    }
   };
 
   return (
