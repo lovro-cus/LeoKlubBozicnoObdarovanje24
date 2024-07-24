@@ -9,7 +9,7 @@ import Login from './pages/login';
 import AdminDashboard from './pages/AdminDashboard';
 import Navbar from './pages/Navbar';
 import Formular from './pages/Formular';
-
+import DodajOtroka from './pages/DodajOtroka';
 
 function App() {
   return (
@@ -30,6 +30,7 @@ function App() {
               <Route path="/:id" element={<Update />} />
               <Route path="/adminDashboard" element={<AdminDashboard />} />
               <Route path="/formular" element={<Formular />} />
+              <Route path="/dodajOtroka" element={<DodajOtroka />} />
             </Routes>
           </Box>
         </BrowserRouter>
