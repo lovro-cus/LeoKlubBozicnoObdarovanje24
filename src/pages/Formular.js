@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, Container, TextField, Typography, FormControl, FormLabel, FormControlLabel, Checkbox, Paper, Grid } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Formular = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  
   const [formData, setFormData] = useState({
+    id: Date.now(), // Določimo id tukaj, da je vedno prisoten
     imeDruzine: '',
     ime: '',
     telStevilka: '',
@@ -16,18 +20,48 @@ const Formular = () => {
     mobilnaStevilka: ''
   });
 
-  const navigate = useNavigate();
+  const [childData, setChildData] = useState([]); // Stanje za shranjene podatke o otrocih
 
   useEffect(() => {
-    // Ob nalaganju komponente preberemo stanje iz localStorage
-    const storedFormData = JSON.parse(localStorage.getItem('formData'));
-    if (storedFormData) {
-      setFormData(storedFormData);
+    if (location.state && location.state.isNewFamily) {
+      // Če gre za novo družino, že imamo id v začetnem stanju
+      setFormData((prevData) => ({
+        ...prevData,
+        id: Date.now()
+      }));
+      setChildData([]);
+    } else if (location.state && location.state.family) {
+      // Če urejamo obstoječo družino, napolnimo obrazec z obstoječimi podatki
+      const family = location.state.family;
+      setFormData(family);
+      setChildData(family.children || []);
+    } else {
+      // Če ni stanja, preveri localStorage (npr., če uporabnik neposredno dostopa do obrazca)
+      const savedFormData = JSON.parse(localStorage.getItem('formData'));
+      if (savedFormData) {
+        setFormData(savedFormData);
+        setChildData(savedFormData.children || []);
+      } else {
+        // Nastavi privzete vrednosti za nov obrazec
+        setFormData({
+          id: Date.now(), 
+          imeDruzine: '',
+          ime: '',
+          telStevilka: '',
+          dostavaNaDom: false,
+          dostavaNaSolu: false,
+          ulica: '',
+          mesto: '',
+          postnaStevilka: '',
+          drzava: '',
+          mobilnaStevilka: ''
+        });
+        setChildData([]);
+      }
     }
-    
-  }, []);
+  }, [location]);
 
-  const handleChange = (e) => {
+  const handleFormChange = (e) => {
     const { name, value, type, checked } = e.target;
     const updatedFormData = {
       ...formData,
@@ -41,15 +75,19 @@ const Formular = () => {
     }
 
     setFormData(updatedFormData);
-    // Shranimo stanje v localStorage ob vsaki spremembi
     localStorage.setItem('formData', JSON.stringify(updatedFormData));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Funkcionalnost za oddajo obrazca bo dodana kasneje
+  const handleEditChild = (child) => {
+    navigate('/dodajOtroka', { state: { child, familyId: formData.id, formData } });
   };
 
+  const handleDeleteChild = (childId) => {
+    const updatedChildData = childData.filter(child => child.id !== childId);
+    setChildData(updatedChildData);
+    localStorage.setItem('wishes', JSON.stringify(updatedChildData));
+  };
+  
   const openInGoogleMaps = () => {
     const address = `${formData.ulica}, ${formData.mesto}, ${formData.postnaStevilka}, ${formData.drzava}`.toUpperCase();
     const encodedAddress = encodeURIComponent(address);
@@ -57,8 +95,34 @@ const Formular = () => {
     window.open(googleMapsUrl, '_blank');
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const storedFamilies = JSON.parse(localStorage.getItem('families')) || [];
+    
+    const familyIndex = storedFamilies.findIndex(family => family.id === formData.id);
+    
+    if (familyIndex > -1) {
+      storedFamilies[familyIndex] = { ...formData, children: childData };
+    } else {
+      storedFamilies.push({ ...formData, children: childData });
+    }
+
+    localStorage.setItem('families', JSON.stringify(storedFamilies));
+    localStorage.removeItem('formData'); // Po uspešnem shranjevanju odstranimo začasne podatke
+    navigate('/addFormular');
+  };
+  
   const handleAddChild = () => {
-    navigate('/dodajOtroka');
+    // Preden dodamo otroka, shranimo trenutno družino v localStorage
+    const storedFamilies = JSON.parse(localStorage.getItem('families')) || [];
+    const familyExists = storedFamilies.some(family => family.id === formData.id);
+
+    if (!familyExists) {
+      storedFamilies.push({ ...formData, children: childData });
+      localStorage.setItem('families', JSON.stringify(storedFamilies));
+    }
+
+    navigate('/dodajOtroka', { state: { familyId: formData.id, formData } });
   };
 
   return (
@@ -74,13 +138,13 @@ const Formular = () => {
         <form onSubmit={handleSubmit}>
           <Paper elevation={3} sx={{ p: 3, borderRadius: 2, mb: 3, position: 'relative' }}>
             <Box sx={{ position: 'absolute', top: 4, left: 10, backgroundColor: 'white', px: 1 }}>
-            <FormLabel component="legend">Ime družine</FormLabel>
+              <FormLabel component="legend">Ime družine</FormLabel>
             </Box>
             <TextField
               name="imeDruzine"
               label="Ime Družine"
               value={formData.imeDruzine}
-              onChange={handleChange}
+              onChange={handleFormChange}
               fullWidth
               margin="normal"
               required
@@ -88,7 +152,7 @@ const Formular = () => {
           </Paper>
           <Paper elevation={3} sx={{ p: 3, borderRadius: 2, mb: 3, position: 'relative' }}>
             <Box sx={{ position: 'absolute', top: 4, left: 10, backgroundColor: 'white', px: 1 }}>
-            <FormLabel component="legend">Kontaktni podatki</FormLabel>
+              <FormLabel component="legend">Kontaktni podatki</FormLabel>
             </Box>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
@@ -96,7 +160,7 @@ const Formular = () => {
                   name="ime"
                   label="Ime in priimek starša/skrbnika"
                   value={formData.ime}
-                  onChange={handleChange}
+                  onChange={handleFormChange}
                   fullWidth
                   margin="normal"
                   required
@@ -107,7 +171,7 @@ const Formular = () => {
                   name="telStevilka"
                   label="Tel Številka"
                   value={formData.telStevilka}
-                  onChange={handleChange}
+                  onChange={handleFormChange}
                   fullWidth
                   margin="normal"
                   required
@@ -117,14 +181,14 @@ const Formular = () => {
           </Paper>
           <Paper elevation={3} sx={{ p: 3, borderRadius: 2, mb: 3, position: 'relative' }}>
             <Box sx={{ position: 'absolute', top: 4, left: 10, backgroundColor: 'white', px: 1 }}>
-            <FormLabel component="legend">Izberite tip dostave</FormLabel>
+              <FormLabel component="legend">Izberite tip dostave</FormLabel>
             </Box>
             <FormControl component="fieldset" margin="normal">
               <FormControlLabel
                 control={
                   <Checkbox
                     checked={formData.dostavaNaDom}
-                    onChange={handleChange}
+                    onChange={handleFormChange}
                     name="dostavaNaDom"
                   />
                 }
@@ -134,7 +198,7 @@ const Formular = () => {
                 control={
                   <Checkbox
                     checked={formData.dostavaNaSolu}
-                    onChange={handleChange}
+                    onChange={handleFormChange}
                     name="dostavaNaSolu"
                   />
                 }
@@ -147,7 +211,7 @@ const Formular = () => {
                   name="ulica"
                   label="Ulica"
                   value={formData.ulica}
-                  onChange={handleChange}
+                  onChange={handleFormChange}
                   fullWidth
                   margin="normal"
                   required
@@ -156,7 +220,7 @@ const Formular = () => {
                   name="mesto"
                   label="Mesto"
                   value={formData.mesto}
-                  onChange={handleChange}
+                  onChange={handleFormChange}
                   fullWidth
                   margin="normal"
                   required
@@ -165,7 +229,7 @@ const Formular = () => {
                   name="postnaStevilka"
                   label="Poštna številka"
                   value={formData.postnaStevilka}
-                  onChange={handleChange}
+                  onChange={handleFormChange}
                   fullWidth
                   margin="normal"
                   required
@@ -174,7 +238,7 @@ const Formular = () => {
                   name="drzava"
                   label="Država"
                   value={formData.drzava}
-                  onChange={handleChange}
+                  onChange={handleFormChange}
                   fullWidth
                   margin="normal"
                   required
@@ -183,7 +247,7 @@ const Formular = () => {
                   name="mobilnaStevilka"
                   label="Mobilna številka"
                   value={formData.mobilnaStevilka}
-                  onChange={handleChange}
+                  onChange={handleFormChange}
                   fullWidth
                   margin="normal"
                   required
@@ -194,6 +258,43 @@ const Formular = () => {
               </>
             )}
           </Paper>
+
+          {/* Prikaz in urejanje podatkov o otrocih */}
+          {childData.length > 0 && (
+            <>
+              {childData.map((child, index) => (
+                <Paper elevation={3} sx={{ p: 3, borderRadius: 2, mb: 3 }} key={child.id}>
+                  <Typography variant="h6" gutterBottom>
+                    {child.ime} {child.priimek} - Podatki o otroku {index + 1}
+                  </Typography>
+                  <Typography variant="body1"><strong>Spol:</strong> {child.spol}</Typography>
+                  <Typography variant="body1"><strong>Starost:</strong> {child.starost} let</Typography>
+                  <Typography variant="body1"><strong>Želja:</strong> {child.zelja}</Typography>
+                  <Typography variant="body1"><strong>Obutev:</strong> {child.obutev || '/'}</Typography>
+                  <Typography variant="body1"><strong>Konfekcija:</strong> {child.konfekcija || '/'}</Typography>
+                  <Typography variant="body1"><strong>Alergije:</strong> {child.alergije || '/'}</Typography>
+                  <Typography variant="body1"><strong>Šola:</strong> {child.sola || '/'}</Typography>
+                  <Button 
+                    variant="outlined" 
+                    color="primary" 
+                    onClick={() => handleEditChild(child)}
+                    sx={{ mt: 2, mr: 2 }}
+                  >
+                    Uredi
+                  </Button>
+                  <Button 
+                    variant="outlined" 
+                    color="secondary" 
+                    onClick={() => handleDeleteChild(child.id)}
+                    sx={{ mt: 2 }}
+                  >
+                    Izbriši
+                  </Button>
+                </Paper>
+              ))}
+            </>
+          )}
+
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
             <Button type="submit" variant="contained" color="primary">
               Pošlji

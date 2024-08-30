@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, Container, TextField, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const DodajOtroka = () => {
   const [childData, setChildData] = useState({
@@ -15,18 +16,19 @@ const DodajOtroka = () => {
   });
 
   const [dostavaNaSolu, setDostavaNaSolu] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { familyId, formData } = location.state || {}; 
 
   useEffect(() => {
-    // Preberemo stanje iz localStorage
-    const storedFormData = JSON.parse(localStorage.getItem('formData'));
-    if (storedFormData) {
-      setDostavaNaSolu(storedFormData.dostavaNaSolu);
+    if (formData) {
+      setDostavaNaSolu(formData.dostavaNaSolu);
       setChildData((prevData) => ({
         ...prevData,
-        priimek: storedFormData.imeDruzine
+        priimek: formData.imeDruzine
       }));
     }
-  }, []);
+  }, [formData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,8 +39,28 @@ const DodajOtroka = () => {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    // Funkcionalnost za oddajo obrazca bo dodana kasneje
+    e.preventDefault(); // Prevent default form submission
+  
+    if (!familyId) {
+      alert('Družina ni določena.');
+      navigate('/formular');
+      return;
+    }
+
+    // Update family data with the new child
+    const storedFamilies = JSON.parse(localStorage.getItem('families')) || [];
+    const familyIndex = storedFamilies.findIndex(family => String(family.id) === String(familyId));
+
+    if (familyIndex > -1) {
+      const updatedFamily = { ...storedFamilies[familyIndex] };
+      updatedFamily.children = [...(updatedFamily.children || []), { ...childData, id: Date.now() }];
+      storedFamilies[familyIndex] = updatedFamily;
+      localStorage.setItem('families', JSON.stringify(storedFamilies));
+      navigate('/formular', { state: { family: updatedFamily } });
+    } else {
+      alert('Napaka pri shranjevanju otroka. Družina ni bila najdena.');
+      navigate('/formular', { state: { formData } });
+    }
   };
 
   return (
@@ -66,15 +88,20 @@ const DodajOtroka = () => {
             margin="normal"
             required
           />
-          <TextField
-            name="spol"
-            label="Spol"
-            value={childData.spol}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            required
-          />
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="spol-label">Spol</InputLabel>
+            <Select
+              labelId="spol-label"
+              id="spol"
+              name="spol"
+              value={childData.spol}
+              onChange={handleChange}
+              required
+            >
+              <MenuItem value="Moški">Moški</MenuItem>
+              <MenuItem value="Ženska">Ženska</MenuItem>
+            </Select>
+          </FormControl>
           <TextField
             name="starost"
             label="Starost"
@@ -137,7 +164,7 @@ const DodajOtroka = () => {
             <Button type="submit" variant="contained" color="primary">
               Shrani
             </Button>
-            <Button variant="contained" color="secondary" onClick={() => window.history.back()}>
+            <Button variant="contained" color="secondary" onClick={() => navigate('/formular', { state: { family: formData } })}>
               Prekliči
             </Button>
           </Box>

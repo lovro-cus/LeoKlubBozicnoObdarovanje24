@@ -1,6 +1,9 @@
 import React from 'react';
 import { Drawer, List, ListItem, ListItemText, ListItemIcon, IconButton, Toolbar, AppBar, Typography, Box, Divider } from '@mui/material';
 import { Home as HomeIcon, Login as LoginIcon, Dashboard as DashboardIcon, Menu as MenuIcon } from '@mui/icons-material';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import SummarizeIcon from '@mui/icons-material/Summarize';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import { Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../AuthContext'; // Uvozite useAuth
 import leoKlubLogo from '../images/leoKlubLogo.png'; // Importirajte sliko
@@ -37,14 +40,26 @@ const Navbar = () => {
             <ListItemIcon><HomeIcon /></ListItemIcon>
             <ListItemText primary="Domov" />
           </ListItem>
-          {!isAdmin && (
-            <ListItem button component={RouterLink} to="/login">
-              <ListItemIcon><LoginIcon /></ListItemIcon>
-              <ListItemText primary="Prijava" />
-            </ListItem>
-          )}
+          <ListItem button component={RouterLink} to="/wishes">
+            <ListItemIcon><AutoAwesomeIcon /></ListItemIcon>
+            <ListItemText primary="Želje" />
+          </ListItem>
+          <ListItem button component={RouterLink} to="/vstopFormular">
+            <ListItemIcon><SummarizeIcon /></ListItemIcon>
+            <ListItemText primary="Formular" />
+          </ListItem>
+          <ListItem button component={RouterLink} to="/vstopDostava">
+            <ListItemIcon><DirectionsCarIcon /></ListItemIcon>
+            <ListItemText primary="Za dostavljalce" />
+          </ListItem>
         </List>
       </Box>
+      {!isAdmin && (
+            <ListItem button component={RouterLink} to="/login">
+              <ListItemIcon><LoginIcon /></ListItemIcon>
+              <ListItemText primary="Prijava admina" />
+            </ListItem>
+      )}
       {isAdmin && (
         <Box sx={{ pb: 2 }}>
           <ListItem button component={RouterLink} to="/adminDashboard">
