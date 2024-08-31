@@ -27,44 +27,49 @@ const WishesDarovalecPodatki = () => {
 
     // Odstranimo izbrane želje iz localStorage
     const storedWishes = JSON.parse(localStorage.getItem('wishes')) || [];
-    const selectedWish = storedWishes.find(wish => selectedWishes.includes(wish.id));
+    const selectedWishObjects = storedWishes.filter(wish => selectedWishes.includes(wish.id));
     const updatedWishes = storedWishes.filter(wish => !selectedWishes.includes(wish.id));
     localStorage.setItem('wishes', JSON.stringify(updatedWishes));
 
     console.log('User details:', formData);
-    console.log('Izbrana želja:', selectedWish);
+    console.log('Izbrane želje:', selectedWishObjects);
 
-    // Pošiljanje e-pošte z uporabo EmailJS, kjer predlogo podamo neposredno iz kode
+    // Oblikovanje seznama želja za e-pošto
+    const wishList = selectedWishObjects.map(wish => `- Želja: ${wish.zelja}, Starost: ${wish.starost} let`).join('\n');
+
+    // Pošiljanje e-pošte z uporabo EmailJS
     const templateParams = {
-      to_name: formData.ime,
-      to_email: formData.email,
-      subject: 'Potrditev želje za otroka',
-      message: `
-        Pozdravljeni ${formData.ime},
+        to_name: formData.ime,
+        to_email: formData.email,
+        subject: 'Potrditev želje za otroka - Bozicno obdarovanje Leo klub Ptuj',
+        message: `
+            Pozdravljeni ${formData.ime},
 
-        Hvala, ker ste izbrali darilo za otroka.
+            Hvala, ker ste izbrali darila za otroke.
 
-        Podrobnosti o želji:
-        - Želja: ${selectedWish.zelja}
-        - Starost: ${selectedWish.starost}
+            Podrobnosti o izbranih željah:
+            ${wishList}
 
-        Prejeli boste nadaljnja navodila na ta e-naslov.
+            Prejeli boste nadaljnja navodila na ta e-naslov.
 
-        Lep pozdrav,
-        Leo Klub Ptuj
-      `
+            Lep pozdrav,
+            Leo Klub Ptuj
+        `
     };
 
-    emailjs.send('service_gharran', 'YOUR_TEMPLATE_ID', templateParams, 'YOUR_USER_ID')
-      .then((response) => {
-        console.log('SUCCESS!', response.status, response.text);
-      }, (err) => {
-        console.log('FAILED...', err);
-      });
+    emailjs.send('service_gharran', 'template_prb64zj', templateParams, '7tZRx34xEzy9g-6sX')
+        .then((response) => {
+            console.log('SUCCESS!', response.status, response.text);
+        }, (err) => {
+            console.log('FAILED...', err);
+        });
 
-    // Preusmeritev na stran WishesPodatki s podatki o izbrani želji
-    navigate('/wishesPodatki', { state: { selectedWish, formData } });
-  };
+    // Preusmeritev na stran WishesPodatki s podatki o izbranih željah
+    navigate('/wishesPodatki', { state: { selectedWishes: selectedWishObjects, formData } });
+};
+
+
+
 
   return (
     <div className="page wishesDarovalecPodatki">

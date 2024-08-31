@@ -46,14 +46,9 @@ const Wishes = () => {
       return a.spol === 'Moški' ? -1 : 1; // Show only boys
     }
     return 0; // Default sort (no sort)
-  }).filter((wish) => {
-    if (sortOption === 'deklice') {
-      return wish.spol === 'Ženska';
-    } else if (sortOption === 'fantje') {
-      return wish.spol === 'Moški';
-    }
-    return true; // Show all if no specific filter
-  });
+  }).filter((wish) => wish.showInWishes); // Prikaži samo želje, ki so označene za prikaz
+
+  
 
   if (loading) return <p>Nalaganje želja...</p>;
 

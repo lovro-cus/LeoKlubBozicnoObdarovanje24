@@ -18,17 +18,22 @@ const DodajOtroka = () => {
   const [dostavaNaSolu, setDostavaNaSolu] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { familyId, formData } = location.state || {}; 
+  const { familyId, formData, obstojecChild } = location.state || {};
 
   useEffect(() => {
     if (formData) {
-      setDostavaNaSolu(formData.dostavaNaSolu);
-      setChildData((prevData) => ({
-        ...prevData,
-        priimek: formData.imeDruzine
-      }));
+        setDostavaNaSolu(formData.dostavaNaSolu);
+        setChildData((prevData) => ({
+            ...prevData,
+            priimek: formData.imeDruzine
+        }));
     }
-  }, [formData]);
+    
+    // Če obstajajo podatki o otroku, jih predizpolnimo v obrazcu
+    if (location.state && location.state.child) {
+        setChildData(location.state.child);
+    }
+  }, [formData, location.state]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,7 +58,18 @@ const DodajOtroka = () => {
 
     if (familyIndex > -1) {
       const updatedFamily = { ...storedFamilies[familyIndex] };
-      updatedFamily.children = [...(updatedFamily.children || []), { ...childData, id: Date.now() }];
+
+      if (obstojecChild) {
+        // Urejanje obstoječega otroka
+        const childIndex = updatedFamily.children.findIndex(child => child.id === childData.id);
+        if (childIndex > -1) {
+          updatedFamily.children[childIndex] = childData;
+        }
+      } else {
+        // Dodajanje novega otroka
+        updatedFamily.children = [...(updatedFamily.children || []), { ...childData, id: Date.now() }];
+      }
+
       storedFamilies[familyIndex] = updatedFamily;
       localStorage.setItem('families', JSON.stringify(storedFamilies));
       navigate('/formular', { state: { family: updatedFamily } });
@@ -67,7 +83,7 @@ const DodajOtroka = () => {
     <Container component="main" maxWidth="sm">
       <Box sx={{ mt: 4 }}>
         <Typography variant="h4" gutterBottom>
-          Dodaj Otroka
+          {obstojecChild ? 'Uredi Otroka' : 'Dodaj Otroka'}
         </Typography>
         <form onSubmit={handleSubmit}>
           <TextField

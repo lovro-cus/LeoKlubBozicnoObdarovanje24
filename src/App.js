@@ -9,9 +9,11 @@ import WishesPodatki from './pages/wishesPodatki';
 import Create from './pages/Create';
 import Update from './pages/Update';
 import Login from './pages/login';
+import ShraniVseZelje from './pages/ShraniVseZelje';
 import VstopFormular from './pages/vstopFormular';
 import AddFormular from './pages/addFormular';
 import Dostava from './pages/dostava';
+import AdminDostava from './pages/AdminDostava';
 import VstopDostava from './pages/vstopDostava';
 import AdminDashboard from './pages/AdminDashboard';
 import Navbar from './pages/Navbar';
@@ -38,7 +40,9 @@ function App() {
               <Route path="/wishesPodatki" element={<WishesPodatki />} />
               <Route path="/create" element={<Create />} />
               <Route path="/:id" element={<Update />} />
+              <Route path="/ShraniVseZelje" element={<ShraniVseZelje />} />
               <Route path="/adminDashboard" element={<AdminDashboard />} />
+              <Route path="/AdminDostava" element={<AdminDostava />} />
               <Route path="/formular" element={<Formular />} />
               <Route path="/addFormular" element={<AddFormular />} />
               <Route path="/vstopFormular" element={<VstopFormular />} />

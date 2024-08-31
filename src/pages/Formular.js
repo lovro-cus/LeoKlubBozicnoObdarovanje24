@@ -79,14 +79,25 @@ const Formular = () => {
   };
 
   const handleEditChild = (child) => {
-    navigate('/dodajOtroka', { state: { child, familyId: formData.id, formData } });
-  };
+    navigate('/dodajOtroka', { state: { child, familyId: formData.id, formData, obstojecChild: true } });
+};
+
 
   const handleDeleteChild = (childId) => {
+    // Posodobimo seznam otrok v stanju (state)
     const updatedChildData = childData.filter(child => child.id !== childId);
     setChildData(updatedChildData);
-    localStorage.setItem('wishes', JSON.stringify(updatedChildData));
+
+    // Posodobimo seznam otrok v localStorage
+    const storedFamilies = JSON.parse(localStorage.getItem('families')) || [];
+    const familyIndex = storedFamilies.findIndex(family => family.id === formData.id);
+
+    if (familyIndex > -1) {
+        storedFamilies[familyIndex].children = updatedChildData;
+        localStorage.setItem('families', JSON.stringify(storedFamilies));
+    }
   };
+
   
   const openInGoogleMaps = () => {
     const address = `${formData.ulica}, ${formData.mesto}, ${formData.postnaStevilka}, ${formData.drzava}`.toUpperCase();

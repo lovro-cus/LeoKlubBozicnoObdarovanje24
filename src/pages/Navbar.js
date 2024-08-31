@@ -62,6 +62,14 @@ const Navbar = () => {
       )}
       {isAdmin && (
         <Box sx={{ pb: 2 }}>
+          <ListItem button component={RouterLink} to="/AdminDostava">
+            <ListItemIcon><DirectionsCarIcon /></ListItemIcon>
+            <ListItemText primary="Dostava" />
+          </ListItem>
+          <ListItem button component={RouterLink} to="/ShraniVseZelje">
+            <ListItemIcon><AutoAwesomeIcon /></ListItemIcon>
+            <ListItemText primary="Admin dostop zelj" />
+          </ListItem>
           <ListItem button component={RouterLink} to="/adminDashboard">
             <ListItemIcon><DashboardIcon /></ListItemIcon>
             <ListItemText primary="Nadzorna plošča" />

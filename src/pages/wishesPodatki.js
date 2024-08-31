@@ -5,9 +5,9 @@ import { Box, Button, Typography } from '@mui/material';
 const WishesPodatki = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { selectedWish, formData } = location.state || {}; 
+  const { selectedWishes, formData } = location.state || {};
 
-  if (!selectedWish || !formData) {
+  if (!selectedWishes || !formData) {
     return <p>Ni podatkov za prikaz.</p>;
   }
 
@@ -17,14 +17,15 @@ const WishesPodatki = () => {
         Hvala, {formData.ime || 'darovalec'}!
       </Typography>
       <Typography variant="body1" paragraph>
-        Izbrali ste željo otroka: {selectedWish.spol === "Moški" ? "Fant" : "Deklica"}, starost {selectedWish.starost} let.
+        Izbrali ste naslednje želje otrok:
       </Typography>
+      {selectedWishes.map((wish, index) => (
+        <Typography key={index} variant="body1" paragraph>
+          - Otrok: {wish.spol === "Moški" ? "Fant" : "Deklica"}, starost {wish.starost} let, želja: {wish.zelja}
+        </Typography>
+      ))}
       <Typography variant="body1" paragraph>
-        Otrokova želja: {selectedWish.zelja}
-      </Typography>
-      <Typography variant="body1" paragraph>
-        Na vaš email naslov ({formData.email}) boste prejeli nadaljnja navodila za dostavo darila.
-        --oz lahko nardimo tak da je tu vsebina ki jo dobi na mail + da pise tudi da bo se prejel enkrat to identicno stvar na mail-- tekom dneva boste prejeli recimo
+        Na vaš email naslov ({formData.email}) boste prejeli nadaljnja navodila za dostavo darila. Ce slucajno ne najdete sporocila, poglejte pod spam.
       </Typography>
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
         <Button variant="contained" color="primary" onClick={() => navigate('/wishes')}>
@@ -34,5 +35,6 @@ const WishesPodatki = () => {
     </div>
   );
 };
+
 
 export default WishesPodatki;
