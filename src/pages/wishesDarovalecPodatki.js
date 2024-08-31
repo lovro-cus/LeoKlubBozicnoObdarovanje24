@@ -39,7 +39,7 @@ const WishesDarovalecPodatki = () => {
 
     // Pošiljanje e-pošte z uporabo EmailJS
     const templateParams = {
-        to_name: formData.ime,
+        to_name: formData.ime, // to je vseeno, ne bi rabla
         to_email: formData.email,
         subject: 'Potrditev želje za otroka - Bozicno obdarovanje Leo klub Ptuj',
         message: `
